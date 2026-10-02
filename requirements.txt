@@ -1,2 +1,4 @@
-# PocketSmart AI single-file prototype
-# No external Python packages are required to run the HTML demo.
+fastapi
+uvicorn
+google-genai
+python-dotenv
