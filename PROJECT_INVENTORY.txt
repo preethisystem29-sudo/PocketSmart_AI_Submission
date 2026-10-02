@@ -1,0 +1,30 @@
+.gitignore
+1. Brainstorming & Ideation/01_Project_Idea.md
+1. Brainstorming & Ideation/02_Objectives_and_Persona.md
+2. Requirement Analysis/01_Functional_Requirements.md
+2. Requirement Analysis/02_Non_Functional_and_Tech_Stack.md
+2. Requirement Analysis/03_Use_Cases.md
+3. Project Design Phase/01_System_Architecture.md
+3. Project Design Phase/02_System_Flow.md
+3. Project Design Phase/03_Data_Flow.md
+3. Project Design Phase/architecture.png
+3. Project Design Phase/system_flow.png
+4. Project Planning Phase/01_Work_Breakdown.md
+4. Project Planning Phase/02_Timeline.md
+5. Project Development Phase/01_Implementation_Overview.md
+5. Project Development Phase/02_Prompt_Engineering.md
+6. Project Testing/01_Test_Cases.md
+6. Project Testing/02_Testing_Report.md
+7. Project Documentation/01_Project_Report.md
+7. Project Documentation/02_Setup_Guide.md
+7. Project Documentation/03_Limitations_and_Ethics.md
+7. Project Documentation/PocketSmart_AI_Presentation.pptx
+7. Project Documentation/PocketSmart_AI_Project_Report.docx
+7. Project Documentation/architecture.png
+8. Project Demonstration/01_Demo_Script.md
+8. Project Demonstration/02_Demo_Checklist.md
+8. Project Demonstration/system_flow.png
+PocketSmart_AI.html
+README.md
+SUBMISSION_CHECKLIST.md
+requirements.txt

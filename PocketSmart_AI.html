@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PocketSmart AI — Smart Budget & Recommendation Assistant</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#18212f;--muted:#667085;--primary:#5b4bdb;
+  --primary2:#7c3aed;--line:#e7eaf0;--good:#16834b;--warn:#b76e00;--danger:#c0392b;
+  --shadow:0 12px 35px rgba(31,41,55,.08);--radius:18px
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#15142b;color:white;padding:24px 16px;position:fixed;inset:0 auto 0 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;padding:8px 10px 28px}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:grid;place-items:center}
+.nav button{width:100%;background:transparent;color:#c8c6d8;text-align:left;padding:12px 14px;border-radius:11px;margin:3px 0}.nav button.active,.nav button:hover{background:#292642;color:white}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1450px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+h1{font-size:28px;margin:0 0 6px}.subtitle{color:var(--muted);margin:0}.badge{padding:8px 12px;border-radius:999px;background:#ede9fe;color:#5b21b6;font-weight:700;font-size:12px}
+.page{display:none}.page.active{display:block}.grid{display:grid;gap:18px}.grid4{grid-template-columns:repeat(4,1fr)}.grid2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:26px;font-weight:800;margin-top:8px}.stat .hint{font-size:12px;color:var(--muted);margin-top:5px}
+.hero{background:linear-gradient(135deg,#211b52,#5b4bdb);color:white;border-radius:24px;padding:28px;margin-bottom:18px;box-shadow:var(--shadow)}
+.hero h2{font-size:30px;margin:0 0 8px}.hero p{color:#ddd9ff;max-width:760px;line-height:1.6}
+.btn{padding:11px 16px;border-radius:11px;font-weight:700}.btn-primary{background:#5b4bdb;color:white}.btn-primary:hover{background:#493bc4}.btn-light{background:white;color:#342a8c}.btn-ghost{background:#f0efff;color:#5144bf}.btn-danger{background:#feeceb;color:#a42c21}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}.field{margin-bottom:16px}input,select,textarea{width:100%;padding:12px 13px;border:1px solid #dfe3ea;border-radius:11px;outline:none;background:white}input:focus,select:focus,textarea:focus{border-color:#8b7cf0;box-shadow:0 0 0 3px #ede9fe}textarea{min-height:105px;resize:vertical}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}.section-title{font-size:18px;font-weight:800;margin:0 0 14px}
+.progress{height:10px;background:#eceef3;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,#7c3aed,#4f46e5);border-radius:99px}
+.chart{height:230px;display:flex;align-items:flex-end;gap:16px;padding:20px 8px 0}.bar-wrap{flex:1;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:8px}.bar{min-height:4px;background:linear-gradient(180deg,#8b5cf6,#5b4bdb);border-radius:8px 8px 2px 2px}.bar-label{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-value{font-size:11px;font-weight:700}
+.result{background:#fafaff;border:1px solid #e4e0ff;border-radius:15px;padding:18px;line-height:1.65}.result h3{margin:0 0 10px}.result h4{margin:18px 0 7px}.result ul{margin-top:7px}.ai-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#eaf8f0;color:var(--good)}
+.history-item{display:flex;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border-bottom:0}.history-item strong{display:block}.history-item small{color:var(--muted)}.empty{text-align:center;padding:35px;color:var(--muted)}
+.notice{padding:13px 15px;border-radius:12px;background:#fff8e8;color:#825500;border:1px solid #f5dfaa;font-size:13px;line-height:1.5}
+.kpi-row{display:flex;gap:20px;flex-wrap:wrap}.kpi{flex:1;min-width:160px}.rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.rec-box{padding:14px;border:1px solid var(--line);border-radius:13px;background:white}.rec-box b{font-size:13px}.rec-box .amt{font-size:21px;font-weight:800;margin-top:4px}
+.toast{position:fixed;right:24px;bottom:24px;background:#15142b;color:white;padding:13px 16px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:5}.toast.show{display:block}
+footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:900px){.sidebar{width:76px;padding:18px 10px}.brand span,.nav button span{display:none}.nav button{text-align:center}.main{margin-left:76px;width:calc(100% - 76px);padding:18px}.grid4{grid-template-columns:1fr 1fr}.grid2,.rec-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.grid4{grid-template-columns:1fr}.top{align-items:flex-start;gap:12px;flex-direction:column}.main{padding:12px}.hero h2{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">₹</div><span>PocketSmart AI</span></div>
+  <nav class="nav">
+    <button class="active" data-page="home">🏠 <span>Dashboard</span></button>
+    <button data-page="budget">💰 <span>Budget Planner</span></button>
+    <button data-page="recommend">✨ <span>AI Recommendation</span></button>
+    <button data-page="history">🕘 <span>History</span></button>
+    <button data-page="settings">⚙️ <span>Settings</span></button>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="top">
+    <div><h1 id="pageTitle">Dashboard</h1><p class="subtitle" id="pageSubtitle">Understand your budget. Plan smarter. Spend with confidence.</p></div>
+    <span class="badge">Gemini-powered prototype</span>
+  </div>
+
+  <section id="home" class="page active">
+    <div class="hero">
+      <h2>Make smarter decisions with your budget.</h2>
+      <p>PocketSmart AI combines simple budget calculations with Gemini-generated, personalized recommendations. Enter your financial limits and requirements, then let the assistant suggest a practical plan.</p>
+      <button class="btn btn-light" onclick="showPage('recommend')">✨ Get an AI Recommendation</button>
+    </div>
+    <div class="grid grid4">
+      <div class="card stat"><div class="label">Available Budget</div><div class="value" id="dashBudget">₹0</div><div class="hint">Current planning budget</div></div>
+      <div class="card stat"><div class="label">Planned Spend</div><div class="value" id="dashSpend">₹0</div><div class="hint">From your latest plan</div></div>
+      <div class="card stat"><div class="label">Remaining</div><div class="value" id="dashRemain">₹0</div><div class="hint">Budget minus planned spend</div></div>
+      <div class="card stat"><div class="label">Saved Plans</div><div class="value" id="dashHistory">0</div><div class="hint">Recommendation history</div></div>
+    </div>
+    <div class="grid grid2" style="margin-top:18px">
+      <div class="card"><div class="section-title">Budget Utilization</div><div class="progress"><div id="dashProgress" style="width:0%"></div></div><p id="dashProgressText" style="color:var(--muted);font-size:13px">No budget entered yet.</p></div>
+      <div class="card"><div class="section-title">How PocketSmart works</div><ol style="line-height:1.9;color:var(--muted);padding-left:22px"><li>Enter your budget and requirement.</li><li>Add preferences and constraints.</li><li>Ask Gemini for a personalized plan.</li><li>Save the recommendation for later.</li></ol></div>
+    </div>
+  </section>
+
+  <section id="budget" class="page">
+    <div class="grid grid2">
+      <div class="card">
+        <div class="section-title">Budget Planner</div>
+        <div class="field"><label>Available Budget (₹)</label><input id="budget" type="number" min="0" placeholder="50000"></div>
+        <div class="field"><label>Estimated Planned Spend (₹)</label><input id="planned" type="number" min="0" placeholder="42000"></div>
+        <div class="field"><label>Optional Savings / Reserve (₹)</label><input id="reserve" type="number" min="0" placeholder="8000"></div>
+        <button class="btn btn-primary" onclick="calculateBudget()">Calculate Budget</button>
+      </div>
+      <div class="card">
+        <div class="section-title">Budget Summary</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="label">Budget</div><div class="value" id="sumBudget">₹0</div></div>
+          <div class="kpi"><div class="label">Planned</div><div class="value" id="sumSpend">₹0</div></div>
+          <div class="kpi"><div class="label">Remaining</div><div class="value" id="sumRemain">₹0</div></div>
+        </div>
+        <div style="margin-top:18px"><div class="label">Utilization</div><div class="progress"><div id="sumProgress" style="width:0%"></div></div><p id="sumStatus" style="font-size:13px;color:var(--muted)">Enter values to calculate.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="recommend" class="page">
+    <div class="grid grid2">
+      <div class="card">
+        <div class="section-title">Tell PocketSmart what you need</div>
+        <div class="field"><label>Category</label>
+          <select id="category">
+            <option>Interior Planning</option><option>Jewelry</option><option>Party Planning</option><option>Electronics</option><option>Travel Planning</option><option>Personal Purchase</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Budget (₹)</label><input id="recBudget" type="number" min="1" placeholder="50000"></div>
+        <div class="field"><label>Requirement</label><textarea id="requirement" placeholder="Example: Plan a modern, space-saving bedroom interior for a college student."></textarea></div>
+        <div class="field"><label>Preferences / Constraints</label><textarea id="preferences" placeholder="Example: Minimal style, durable items, keep 10% as reserve."></textarea></div>
+        <div class="field"><label>Number of people / quantity (optional)</label><input id="quantity" type="number" min="1" placeholder="30"></div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="generateAI()">✨ Generate with Gemini</button>
+          <button class="btn btn-ghost" onclick="demoRecommendation()">Try Demo Mode</button>
+        </div>
+        <div class="notice" style="margin-top:15px">Demo Mode works without an API key. Live Gemini mode requires your own Gemini API key in Settings. Do not publish a real API key in a public repository.</div>
+      </div>
+      <div class="card">
+        <div class="ai-head"><div class="section-title" style="margin:0">Recommendation</div><span class="pill" id="aiStatus">Ready</span></div>
+        <div id="recommendationOutput" class="result" style="margin-top:15px">
+          <h3>✨ Your recommendation will appear here</h3>
+          <p style="color:var(--muted)">Fill in the form and generate a plan. PocketSmart will keep the result budget-aware and practical.</p>
+        </div>
+        <div class="form-actions" style="margin-top:12px"><button class="btn btn-primary" id="saveBtn" onclick="saveCurrent()" disabled>💾 Save to History</button><button class="btn btn-ghost" onclick="copyResult()">Copy Result</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="history" class="page">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div class="section-title">Recommendation History</div><button class="btn btn-danger" onclick="clearHistory()">Clear History</button></div>
+      <div id="historyList"></div>
+    </div>
+  </section>
+
+  <section id="settings" class="page">
+    <div class="card">
+      <div class="section-title">Gemini API Settings</div>
+      <div class="notice" style="margin-bottom:16px">For a classroom/demo prototype, this single-file version calls the Gemini REST API directly from the browser. For production, move the API call to a backend so the key is never exposed to users.</div>
+      <div class="field"><label>Gemini API Key</label><input id="apiKey" type="password" placeholder="Paste your Gemini API key"></div>
+      <div class="field"><label>Model</label><select id="model"><option value="gemini-3.8-flash">gemini-3.8-flash</option><option value="gemini-3.5-flash">gemini-3.5-flash</option><option value="gemini-2.5-flash">gemini-2.5-flash</option></select></div>
+      <div class="form-actions"><button class="btn btn-primary" onclick="saveSettings()">Save Settings</button><button class="btn btn-danger" onclick="forgetKey()">Remove Key</button></div>
+      <p id="settingsStatus" style="font-size:13px;color:var(--muted);margin-top:12px"></p>
+    </div>
+  </section>
+
+  <footer>PocketSmart AI • Budget-aware recommendation prototype • AI output should be reviewed before making real financial or purchasing decisions.</footer>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(Number(n)||0);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+let currentResult=null;
+
+const pageMeta={
+ home:['Dashboard','Understand your budget. Plan smarter. Spend with confidence.'],
+ budget:['Budget Planner','Calculate your available amount and planned spending.'],
+ recommend:['AI Recommendation','Generate a personalized plan within your budget.'],
+ history:['History','Review recommendations you saved previously.'],
+ settings:['Settings','Configure Gemini for live AI generation.']
+};
+
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ $(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ $('pageTitle').textContent=pageMeta[id][0];$('pageSubtitle').textContent=pageMeta[id][1];
+ if(id==='history')renderHistory(); if(id==='home')refreshDashboard();
+}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+
+function calculateBudget(){
+ const b=+$('budget').value,p=+$('planned').value,r=+$('reserve').value,rem=b-p;
+ $('sumBudget').textContent=money(b);$('sumSpend').textContent=money(p);$('sumRemain').textContent=money(rem);
+ const pct=b?Math.min(100,Math.max(0,p/b*100)):0;$('sumProgress').style.width=pct+'%';
+ $('sumStatus').textContent=!b?'Enter values to calculate.':rem<0?'Over budget by '+money(Math.abs(rem)):money(rem)+' remains after planned spending.';
+ refreshDashboard(b,p,rem);toast('Budget calculated');
+}
+function refreshDashboard(b,p,rem){
+ if(b===undefined){b=+$('budget').value||0;p=+$('planned').value||0;rem=b-p}
+ $('dashBudget').textContent=money(b);$('dashSpend').textContent=money(p);$('dashRemain').textContent=money(rem);
+ const pct=b?Math.min(100,Math.max(0,p/b*100)):0;$('dashProgress').style.width=pct+'%';
+ $('dashProgressText').textContent=b?(pct.toFixed(0)+'% of the current budget is allocated.'): 'No budget entered yet.';
+ $('dashHistory').textContent=getHistory().length;
+}
+function getHistory(){try{return JSON.parse(localStorage.getItem('pocketsmart_history')||'[]')}catch{return[]}}
+function setHistory(h){localStorage.setItem('pocketsmart_history',JSON.stringify(h))}
+function saveSettings(){
+ const key=$('apiKey').value.trim(); if(key)localStorage.setItem('pocketsmart_key',key);
+ localStorage.setItem('pocketsmart_model',$('model').value); $('settingsStatus').textContent=key?'API key saved locally in this browser.':'No key saved.';
+ toast('Settings saved');
+}
+function loadSettings(){
+ const key=localStorage.getItem('pocketsmart_key')||'';$('apiKey').value=key;
+ $('model').value=localStorage.getItem('pocketsmart_model')||'gemini-3.8-flash';
+ $('settingsStatus').textContent=key?'A key is saved locally in this browser.':'No API key configured.';
+}
+function forgetKey(){localStorage.removeItem('pocketsmart_key');$('apiKey').value='';$('settingsStatus').textContent='API key removed.';toast('API key removed')}
+function makePrompt(){
+ const category=$('category').value,budget=+$('recBudget').value,req=$('requirement').value.trim(),pref=$('preferences').value.trim(),qty=$('quantity').value.trim();
+ return `You are PocketSmart AI, a budget-aware recommendation assistant.
+User request:
+Category: ${category}
+Budget: ₹${budget}
+Requirement: ${req||'Not specified'}
+Preferences/constraints: ${pref||'Not specified'}
+Quantity/people: ${qty||'Not specified'}
+
+Create a practical personalized recommendation. Respect the user's stated budget. Do not claim live prices, availability, discounts, or specific products unless the user supplied them. If amounts are suggested, clearly label them as estimates. Keep at least a sensible reserve when appropriate.
+
+Return:
+1. A short recommendation summary.
+2. A proposed budget allocation with 3-6 categories and estimated amounts in INR whose total does not exceed the stated budget.
+3. Why the plan fits.
+4. Two alternatives or trade-offs.
+5. Three practical tips.
+6. A brief note that AI estimates should be verified before real spending.
+
+Use clean headings and bullet points.`;
+}
+async function generateAI(){
+ const key=localStorage.getItem('pocketsmart_key')||$('apiKey').value.trim();
+ const budget=+$('recBudget').value;
+ if(!budget||budget<=0){toast('Enter a valid budget first');return}
+ if(!key){toast('Add your Gemini API key in Settings');showPage('settings');return}
+ $('aiStatus').textContent='Generating…';$('saveBtn').disabled=true;
+ try{
+   const model=$('model').value||'gemini-3.8-flash';
+   const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+   const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{role:'user',parts:[{text:makePrompt()}]}],generationConfig:{temperature:0.5,maxOutputTokens:1200}})});
+   const data=await res.json();
+   if(!res.ok) throw new Error(data?.error?.message||`API error ${res.status}`);
+   const text=data?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'No response returned.';
+   renderAI(text,'Gemini AI');
+ }catch(e){
+   $('aiStatus').textContent='Error';
+   $('recommendationOutput').innerHTML=`<h3>Could not reach Gemini</h3><p>${esc(e.message)}</p><p style="color:var(--muted)">You can still use Demo Mode, or check the API key/model in Settings.</p>`;
+   toast('Gemini request failed');
+ }
+}
+function demoRecommendation(){
+ const category=$('category').value,budget=+$('recBudget').value||50000,req=$('requirement').value.trim()||'a practical plan',pref=$('preferences').value.trim()||'value for money';
+ const a=Math.round(budget*.55),b=Math.round(budget*.2),c=Math.round(budget*.15),d=budget-a-b-c;
+ const text=`## PocketSmart Demo Recommendation
+
+### Recommendation Summary
+For **${category}**, build a practical plan for **${esc(req)}** while keeping the total within your budget of **₹${budget.toLocaleString('en-IN')}**.
+
+### Suggested Budget Allocation
+- Core requirement — ₹${a.toLocaleString('en-IN')}
+- Secondary requirement — ₹${b.toLocaleString('en-IN')}
+- Optional enhancement — ₹${c.toLocaleString('en-IN')}
+- Reserve / contingency — ₹${d.toLocaleString('en-IN')}
+
+### Why this fits
+The allocation prioritizes the main requirement, limits optional spending, and keeps a reserve for unexpected costs. Preference: ${esc(pref)}.
+
+### Alternatives / Trade-offs
+- Increase the core allocation if quality is more important than variety.
+- Reduce optional items if the final quote exceeds the budget.
+
+### Practical Tips
+- Compare at least two or three options before purchasing.
+- Keep the reserve untouched unless necessary.
+- Verify current prices and availability before spending.
+
+*Demo output: replace with Gemini-generated recommendations for the live project.*`;
+ renderAI(text,'Demo Mode');
+}
+function markdownToHtml(md){
+ let x=esc(md).replace(/^### (.*)$/gm,'<h4>$1</h4>').replace(/^## (.*)$/gm,'<h3>$1</h3>').replace(/^# (.*)$/gm,'<h3>$1</h3>');
+ x=x.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^\- (.*)$/gm,'<li>$1</li>');
+ x=x.replace(/(<li>.*<\/li>\n?)+/g,m=>'<ul>'+m+'</ul>').replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');
+ return x;
+}
+function renderAI(text,source){
+ currentResult={source,text,category:$('category').value,budget:+$('recBudget').value,requirement:$('requirement').value,preferences:$('preferences').value,createdAt:new Date().toISOString()};
+ $('recommendationOutput').innerHTML=markdownToHtml(text);
+ $('aiStatus').textContent=source;$('saveBtn').disabled=false;toast('Recommendation ready');
+}
+function saveCurrent(){
+ if(!currentResult)return;
+ const h=getHistory();h.unshift(currentResult);setHistory(h.slice(0,30));refreshDashboard();toast('Saved to history');$('saveBtn').disabled=true;
+}
+function renderHistory(){
+ const h=getHistory(),el=$('historyList');
+ if(!h.length){el.innerHTML='<div class="empty">No saved recommendations yet.<br>Generate one and click “Save to History”.</div>';return}
+ el.innerHTML=h.map((x,i)=>`<div class="history-item"><div><strong>${esc(x.category)} — ${money(x.budget)}</strong><small>${new Date(x.createdAt).toLocaleString()} • ${esc(x.source)}</small></div><button class="btn btn-ghost" onclick="viewHistory(${i})">View</button></div>`).join('');
+}
+function viewHistory(i){
+ const x=getHistory()[i];if(!x)return;
+ $('category').value=x.category;$('recBudget').value=x.budget;$('requirement').value=x.requirement||'';$('preferences').value=x.preferences||'';
+ currentResult=x;$('recommendationOutput').innerHTML=markdownToHtml(x.text);$('aiStatus').textContent=x.source;$('saveBtn').disabled=true;showPage('recommend');
+}
+function clearHistory(){if(confirm('Clear all saved recommendations?')){setHistory([]);renderHistory();refreshDashboard();toast('History cleared')}}
+async function copyResult(){
+ if(!currentResult){toast('Nothing to copy');return}
+ try{await navigator.clipboard.writeText(currentResult.text);toast('Copied')}catch{toast('Copy not available in this browser')}
+}
+loadSettings();refreshDashboard();
+</script>
+</body>
+</html>
